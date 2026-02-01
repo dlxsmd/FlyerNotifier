@@ -1,0 +1,11 @@
+# HTTP
+requests>=2.31.0
+
+# Configuration
+PyYAML>=6.0.1
+
+# Image processing (tile stitching + preview resize)
+Pillow>=10.0.0
+
+# LINE Messaging API v3
+line-bot-sdk>=3.5.0

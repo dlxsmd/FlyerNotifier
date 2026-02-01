@@ -1,0 +1,22 @@
+# Shufoo! チラシ画像LINE送信 設定ファイル (テンプレート)
+# このファイルを config.yaml にコピーして実際のキーを設定してください
+
+stores:
+  - name: "サミット/弦巻通り店"
+    shopId: "264240"
+    enabled: true
+
+line:
+  channel_access_token: "YOUR_LINE_CHANNEL_ACCESS_TOKEN"
+  user_id: "YOUR_LINE_USER_ID"
+
+# AI設定 (OCR + レシピ提案)
+ai:
+  provider: "gemini"  # "gemini" or "deepseek"
+  gemini:
+    api_key: "YOUR_GEMINI_API_KEY"
+    model: "gemini-2.0-flash"
+  deepseek:
+    api_key: "YOUR_DEEPSEEK_API_KEY"
+    model: "deepseek-chat"
+    base_url: "https://api.deepseek.com"
