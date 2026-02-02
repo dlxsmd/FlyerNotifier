@@ -6,8 +6,6 @@ Shufoo!のチラシ画像を自動取得し、AIで分析してレシピ提案�
 
 - 🏪 Shufoo!から指定店舗のチラシ画像を自動取得
 - 📱 LINE Messaging APIでチラシ画像を送信
-- 🤖 AI（Gemini / DeepSeek）でチラシをOCR分析
-- 🍳 特売商品から自動でレシピを提案
 - ⏰ GitHub Actionsで毎朝10時に自動実行
 
 ## セットアップ
@@ -32,7 +30,6 @@ cp config.yaml.example config.yaml
 
 - **店舗情報**: Shufoo!のshopId
 - **LINE認証情報**: channel_access_token, user_id
-- **AI設定**: provider（gemini/deepseek）とAPIキー
 
 ### 3. ローカルで実行
 
@@ -61,36 +58,42 @@ GitHubリポジトリの `Settings` → `Secrets and variables` → `Actions` �
 
 | シークレット名 | 説明 | 例 |
 |--------------|------|-----|
-| `STORE_NAME` | 店舗名 | `サミット/弦巻通り店` |
-| `STORE_SHOP_ID` | ShufooのshopId | `264240` |
+| `STORES` | **複数店舗設定（推奨）**<br>JSON形式で複数店舗を設定 | `[{"name":"サミット/弦巻通り店","shopId":"264240"},{"name":"ライフ/三軒茶屋店","shopId":"123456"}]` |
+| `STORE_NAME` | **単一店舗設定**（後方互換性）<br>店舗名 | `サミット/弦巻通り店` |
+| `STORE_SHOP_ID` | **単一店舗設定**（後方互換性）<br>ShufooのshopId | `264240` |
 | `LINE_CHANNEL_ACCESS_TOKEN` | LINEのチャネルアクセストークン | `abcdef...` |
 | `LINE_USER_ID` | LINEのユーザーID | `U1234567...` |
-| `AI_PROVIDER` | AIプロバイダー | `gemini` または `deepseek` |
-| `AI_API_KEY` | AIのAPIキー | Gemini: `AIza...` / DeepSeek: `sk-...` |
-| `AI_MODEL` | 使用するモデル（省略可） | Gemini: `gemini-2.0-flash` / DeepSeek: `deepseek-chat` |
 
-#### Gemini使用時の例：
+> **💡 複数店舗を設定する場合**
+>
+> `STORES` シークレットに JSON 形式で設定してください。`STORE_NAME` と `STORE_SHOP_ID` は設定不要です。
+>
+> 設定例:
+> ```json
+> [
+>   {"name": "サミット/弦巻通り店", "shopId": "264240"},
+>   {"name": "ライフ/三軒茶屋店", "shopId": "123456"},
+>   {"name": "オーケー/用賀店", "shopId": "789012"}
+> ]
+> ```
+>
+> JSON の改行は不要です。1行で入力してください。
+
+#### 複数店舗設定の例：
+
+```
+STORES=[{"name":"サミット/弦巻通り店","shopId":"264240"},{"name":"ライフ/三軒茶屋店","shopId":"123456"}]
+LINE_CHANNEL_ACCESS_TOKEN=YOUR_LINE_TOKEN
+LINE_USER_ID=YOUR_LINE_USER_ID
+```
+
+#### 単一店舗設定の例：
 
 ```
 STORE_NAME=サミット/弦巻通り店
 STORE_SHOP_ID=264240
 LINE_CHANNEL_ACCESS_TOKEN=YOUR_LINE_TOKEN
 LINE_USER_ID=YOUR_LINE_USER_ID
-AI_PROVIDER=gemini
-AI_API_KEY=AIzaSy...
-AI_MODEL=gemini-2.0-flash
-```
-
-#### DeepSeek使用時の例：
-
-```
-STORE_NAME=サミット/弦巻通り店
-STORE_SHOP_ID=264240
-LINE_CHANNEL_ACCESS_TOKEN=YOUR_LINE_TOKEN
-LINE_USER_ID=YOUR_LINE_USER_ID
-AI_PROVIDER=deepseek
-AI_API_KEY=sk-...
-AI_MODEL=deepseek-chat
 ```
 
 ### 3. ワークフローの動作確認
@@ -114,18 +117,6 @@ AI_MODEL=deepseek-chat
 3. Webhook設定を無効化（受信は不要）
 4. LINEアプリで公式アカウントを友だち追加
 5. ユーザーIDを取得（[LINE公式アカウント](https://manager.line.biz/)から確認可能）
-
-## AI APIの設定
-
-### Gemini API
-
-1. [Google AI Studio](https://aistudio.google.com/app/apikey) でAPIキーを作成
-2. `AI_PROVIDER=gemini`, `AI_API_KEY=YOUR_KEY` を設定
-
-### DeepSeek API
-
-1. [DeepSeek Platform](https://platform.deepseek.com/) でAPIキーを作成
-2. `AI_PROVIDER=deepseek`, `AI_API_KEY=YOUR_KEY` を設定
 
 ## トラブルシューティング
 
@@ -153,5 +144,5 @@ MIT License
 ## 開発者向け情報
 
 - Python 3.13
-- 依存パッケージ: requests, PyYAML, Pillow, line-bot-sdk, google-genai, openai
+- 依存パッケージ: requests, PyYAML, Pillow, line-bot-sdk
 - 画像ホスティング: catbox.moe（匿名アップロード）

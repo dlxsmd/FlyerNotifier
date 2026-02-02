@@ -3,6 +3,7 @@
 GitHub Actions環境変数からconfig.yamlを生成するスクリプト
 """
 import os
+import json
 import yaml
 from pathlib import Path
 
@@ -12,59 +13,60 @@ def create_config():
 
     # 必須環境変数のチェック
     required_vars = [
-        'STORE_NAME',
-        'STORE_SHOP_ID',
         'LINE_CHANNEL_ACCESS_TOKEN',
-        'LINE_USER_ID',
-        'AI_PROVIDER',
-        'AI_API_KEY'
+        'LINE_USER_ID'
     ]
 
     missing_vars = [var for var in required_vars if not os.getenv(var)]
     if missing_vars:
         raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
-    # AI provider設定
-    provider = os.getenv('AI_PROVIDER', 'gemini')
+    # 店舗設定の取得（JSON形式または従来形式）
+    stores = []
+    stores_json = os.getenv('STORES')
 
-    # モデル名のデフォルト値
-    if provider == 'gemini':
-        default_model = 'gemini-2.0-flash'
-    elif provider == 'deepseek':
-        default_model = 'deepseek-chat'
+    if stores_json:
+        # JSON形式の複数店舗設定
+        try:
+            stores_data = json.loads(stores_json)
+            for store in stores_data:
+                stores.append({
+                    'name': store['name'],
+                    'shopId': str(store['shopId']),
+                    'enabled': store.get('enabled', True)
+                })
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON format in STORES environment variable: {e}")
+        except KeyError as e:
+            raise ValueError(f"Missing required field in STORES: {e}")
     else:
-        default_model = 'gemini-2.0-flash'
+        # 従来形式の単一店舗設定（後方互換性）
+        store_name = os.getenv('STORE_NAME')
+        store_shop_id = os.getenv('STORE_SHOP_ID')
+
+        if not store_name or not store_shop_id:
+            raise ValueError(
+                "Either STORES (JSON format) or both STORE_NAME and STORE_SHOP_ID are required.\n"
+                "For multiple stores, use STORES='[{\"name\":\"店舗1\",\"shopId\":\"123\"},{\"name\":\"店舗2\",\"shopId\":\"456\"}]'"
+            )
+
+        stores.append({
+            'name': store_name,
+            'shopId': store_shop_id,
+            'enabled': True
+        })
+
+    if not stores:
+        raise ValueError("At least one store must be configured")
 
     # config構造を作成
     config = {
-        'stores': [
-            {
-                'name': os.getenv('STORE_NAME'),
-                'shopId': os.getenv('STORE_SHOP_ID'),
-                'enabled': True
-            }
-        ],
+        'stores': stores,
         'line': {
             'channel_access_token': os.getenv('LINE_CHANNEL_ACCESS_TOKEN'),
             'user_id': os.getenv('LINE_USER_ID')
-        },
-        'ai': {
-            'provider': provider
         }
     }
-
-    # AI provider別の設定
-    if provider == 'gemini':
-        config['ai']['gemini'] = {
-            'api_key': os.getenv('AI_API_KEY'),
-            'model': os.getenv('AI_MODEL', default_model)
-        }
-    elif provider == 'deepseek':
-        config['ai']['deepseek'] = {
-            'api_key': os.getenv('AI_API_KEY'),
-            'model': os.getenv('AI_MODEL', default_model),
-            'base_url': os.getenv('AI_BASE_URL', 'https://api.deepseek.com')
-        }
 
     # config.yamlに書き込み
     config_path = Path(__file__).parent.parent / 'config.yaml'
@@ -72,8 +74,7 @@ def create_config():
         yaml.dump(config, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
     print(f"✅ config.yaml created successfully at {config_path}")
-    print(f"   Store: {config['stores'][0]['name']}")
-    print(f"   AI Provider: {provider}")
+    print(f"   Stores ({len(stores)}): {', '.join([s['name'] for s in stores])}")
 
 
 if __name__ == '__main__':
