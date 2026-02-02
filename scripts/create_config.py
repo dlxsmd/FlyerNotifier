@@ -28,7 +28,13 @@ def create_config():
     if stores_json:
         # JSON形式の複数店舗設定
         try:
-            stores_data = json.loads(stores_json)
+            # 改行やスペースを含む JSON にも対応
+            stores_json_cleaned = stores_json.strip()
+            stores_data = json.loads(stores_json_cleaned)
+
+            if not isinstance(stores_data, list):
+                raise ValueError("STORES must be a JSON array")
+
             for store in stores_data:
                 stores.append({
                     'name': store['name'],
@@ -36,7 +42,17 @@ def create_config():
                     'enabled': store.get('enabled', True)
                 })
         except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON format in STORES environment variable: {e}")
+            # デバッグ用に最初の100文字を表示
+            preview = stores_json_cleaned[:100] if len(stores_json_cleaned) <= 100 else stores_json_cleaned[:100] + "..."
+            raise ValueError(
+                f"Invalid JSON format in STORES environment variable: {e}\n"
+                f"Received (first 100 chars): {preview}\n"
+                f"Expected format: [{{'name':'店舗1','shopId':'123'}},{{'name':'店舗2','shopId':'456'}}]\n"
+                f"Common issues:\n"
+                f"  - Trailing commas in the array\n"
+                f"  - Missing quotes around strings\n"
+                f"  - Extra commas or brackets"
+            )
         except KeyError as e:
             raise ValueError(f"Missing required field in STORES: {e}")
     else:
