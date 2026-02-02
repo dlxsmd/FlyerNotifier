@@ -1,4 +1,4 @@
-# SaleNotification
+# FlyerNotifier
 
 Shufoo!のチラシ画像を自動取得し、AIで分析してレシピ提案をLINEに送信するアプリケーションです。
 
@@ -51,7 +51,7 @@ git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/SaleNotification.git
+git remote add origin https://github.com/YOUR_USERNAME/FlyerNotifier.git
 git push -u origin main
 ```
 

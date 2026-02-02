@@ -4,16 +4,16 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>net.yuki.sale-notification</string>
+    <string>net.yuki.flyer-notifier</string>
 
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/bin/python3</string>
-        <string>/Users/yuki/SaleNotification/main.py</string>
+        <string>/Users/yuki/FlyerNotifier/main.py</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/yuki/SaleNotification</string>
+    <string>/Users/yuki/FlyerNotifier</string>
 
     <key>StartCalendarInterval</key>
     <dict>
@@ -24,10 +24,10 @@
     </dict>
 
     <key>StandardOutPath</key>
-    <string>/Users/yuki/SaleNotification/logs/launchd_stdout.log</string>
+    <string>/Users/yuki/FlyerNotifier/logs/launchd_stdout.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/yuki/SaleNotification/logs/launchd_stderr.log</string>
+    <string>/Users/yuki/FlyerNotifier/logs/launchd_stderr.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>

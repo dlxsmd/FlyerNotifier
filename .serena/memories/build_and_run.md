@@ -26,8 +26,8 @@ Edit `config.yaml` with:
 
 ## Scheduling (macOS launchd)
 ```bash
-cp scheduling/net.yuki.sale-notification.plist ~/Library/LaunchAgents/
-launchctl load ~/Library/LaunchAgents/net.yuki.sale-notification.plist
+cp scheduling/net.yuki.flyer-notifier.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/net.yuki.flyer-notifier.plist
 ```
 Runs daily at 8:00 AM.
 

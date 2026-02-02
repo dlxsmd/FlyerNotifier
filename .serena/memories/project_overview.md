@@ -1,4 +1,4 @@
-# SaleNotification - Project Overview
+# FlyerNotifier - Project Overview
 
 ## Purpose
 Shufoo! (Japanese digital flyer service) chirashi images are fetched, analyzed by AI for sale items, and recipe suggestions are sent to LINE every morning via scheduled launchd job.
@@ -8,7 +8,7 @@ Pipeline: Fetch chirashi list -> Download tile images -> Stitch tiles -> Upload 
 
 ## Directory Structure
 ```
-SaleNotification/
+FlyerNotifier/
 ├── main.py                     # Entry point: fetch -> download -> send -> analyze -> recipe pipeline
 ├── config.yaml                 # Store list + LINE credentials + AI provider config
 ├── config.yaml.example         # Config template (safe to commit)
@@ -40,7 +40,7 @@ SaleNotification/
 ├── data/images/                # Downloaded chirashi images (ephemeral)
 ├── logs/                       # Application logs
 └── scheduling/
-    ├── net.yuki.sale-notification.plist  # macOS launchd (daily 8:00 AM)
+    ├── net.yuki.flyer-notifier.plist  # macOS launchd (daily 8:00 AM)
     └── install.sh
 ```
 
